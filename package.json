@@ -1,6 +1,6 @@
 {
   "name": "vuex-lite",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A lightweight vuex",
   "main": "dist/vuex-lite.cjs.js",
   "module": "dist/vuex-lite.es.js",
@@ -33,7 +33,7 @@
       "es": "2KB",
       "cjs": "2KB",
       "umd": "2KB",
-      "umd-min": "1KB"
+      "umd-min": "2KB"
     },
     "exports": "named"
   },
@@ -64,7 +64,7 @@
   "homepage": "https://github.com/rayraegah/vuex-lite#readme",
   "devDependencies": {
     "bili": "^2.2.7",
-    "jest": "^22.3.0",
+    "jest": "^22.4.0",
     "prettier": "^1.10.2",
     "vue": "^2.5.13"
   },

@@ -24,3 +24,9 @@ export function unifyObjectStyle(type, payload, options) {
 
   return { type, payload, options };
 }
+
+export function normalizeMap(map) {
+  return Array.isArray(map)
+    ? map.map(k => ({ k, v: k }))
+    : Object.keys(map).map(k => ({ k, v: map[k] }));
+}

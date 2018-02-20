@@ -1,18 +1,12 @@
-import Vue from "vue";
 import devtoolPlugin from "./plugins/devtool";
-import { IS_PROD, unifyObjectStyle, assert } from "./util";
+import { createMapState, mapToMethods } from "./helpers";
+import { IS_PROD, unifyObjectStyle, assert } from "./utils";
 
-export default class Store {
-  static install(_Vue) {
-    _Vue.mixin({
-      beforeCreate() {
-        this.$store =
-          this.$options.store || (this.$parent && this.$parent.$store);
-      }
-    });
-  }
+let Vue; // bind on install
 
+export class Store {
   constructor({ state, mutations = {}, plugins = [], subscribers = [] } = {}) {
+    // automatic installation
     if (!Vue && typeof window !== "undefined" && window.Vue) {
       install(window.Vue);
     }
@@ -36,6 +30,9 @@ export default class Store {
       this._actions = [];
       devtoolPlugin(this);
     }
+
+    this.mapState = createMapState(this);
+    this.mapMutations = mapToMethods("mutations", "commit", this);
   }
 
   get state() {
@@ -90,3 +87,35 @@ export default class Store {
     this._committing = committing;
   }
 }
+
+export function install(_Vue) {
+  if (Vue && _Vue === Vue) {
+    if (!IS_PROD) {
+      assert(
+        false,
+        `already installed. Vue.use(Vuex) should be called only once.`
+      );
+    }
+    return;
+  }
+
+  Vue = _Vue;
+
+  Vue.mixin({
+    beforeCreate: vuexInit
+  });
+
+  function vuexInit() {
+    const options = this.$options;
+    // store injection
+    if (options.store) {
+      this.$store =
+        typeof options.store === "function" ? options.store() : options.store;
+    } else if (options.parent && options.parent.$store) {
+      this.$store = options.parent.$store;
+    }
+  }
+}
+
+export const mapState = createMapState();
+export const mapMutations = mapToMethods("mutations", "commit");

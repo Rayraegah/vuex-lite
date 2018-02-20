@@ -3,6 +3,9 @@ import Vuex from "../";
 
 const TEST = "TEST";
 
+// install vuex
+Vue.use(Vuex);
+
 // supress production tips
 Vue.config.productionTip = false;
 
@@ -72,8 +75,7 @@ describe("Store", () => {
     }).toThrowError(/Cannot call a class as a function/);
   });
 
-  test.skip("store injection", () => {
-    Vue.use(Vuex);
+  test("store injection", () => {
     const store = new Vuex.Store({ state: { a: 1 } });
     const vm = new Vue({
       store

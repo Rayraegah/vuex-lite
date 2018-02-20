@@ -1,4 +1,5 @@
-import Store from "./store";
+import { Store } from "./store";
+import { install, mapState, mapMutations } from "./store";
 
-// emulate Vuex.Store
-export default { Store };
+// emulate vuex
+export default { Store, install, mapState, mapMutations };
