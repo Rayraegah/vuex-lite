@@ -1,0 +1,7 @@
+## Project ##
+dist
+coverage
+node_modules
+
+## Others ##
+.DS_Store

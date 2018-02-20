@@ -1,0 +1,74 @@
+{
+  "name": "vuex-lite",
+  "version": "0.0.1",
+  "description": "A lightweight vuex",
+  "main": "dist/vuex-lite.cjs.js",
+  "module": "dist/vuex-lite.es.js",
+  "unpkg": "dist/vuex-lite.min.js",
+  "jsdelivr": "dist/vuex-lite.min.js",
+  "files": ["dist"],
+  "engines": {
+    "node": ">=7.8.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "bili",
+    "pretty": "prettier --write 'src/**/*.js'"
+  },
+  "babel": {
+    "presets": "env"
+  },
+  "bili": {
+    "format": ["umd", "umd-min", "cjs", "es"],
+    "moduleName": "vuex-lite",
+    "global": {
+      "vue": "Vue"
+    },
+    "buble": {
+      "transforms": {
+        "dangerousForOf": true
+      }
+    },
+    "sizeLimit": {
+      "es": "2KB",
+      "cjs": "2KB",
+      "umd": "2KB",
+      "umd-min": "1KB"
+    },
+    "exports": "named"
+  },
+  "prettier": {
+    "useTabs": false,
+    "printWidth": 80,
+    "tabWidth": 2,
+    "singleQuote": false,
+    "trailingComma": "none",
+    "jsxBracketSameLine": false,
+    "semi": true
+  },
+  "jest": {
+    "collectCoverage": false,
+    "collectCoverageFrom": ["src/**/*.{js,es6}"],
+    "coverageDirectory": ".coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rayraegah/vuex-lite.git"
+  },
+  "keywords": ["state-manager", "vue"],
+  "author": "rayraegah",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rayraegah/vuex-lite/issues"
+  },
+  "homepage": "https://github.com/rayraegah/vuex-lite#readme",
+  "devDependencies": {
+    "bili": "^2.2.7",
+    "jest": "^22.3.0",
+    "prettier": "^1.10.2",
+    "vue": "^2.5.13"
+  },
+  "peerDependencies": {
+    "vue": "^2.5.1"
+  }
+}
