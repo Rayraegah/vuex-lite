@@ -10,7 +10,7 @@ Vue.use(Vuex);
 Vue.config.productionTip = false;
 
 describe("Mutations", () => {
-  test("committing mutations", () => {
+  test("function style commit", () => {
     const store = new Vuex.Store({
       state: {
         a: 1
@@ -27,7 +27,7 @@ describe("Mutations", () => {
     expect(store.state.a).toBe(3);
   });
 
-  test("committing with object style", () => {
+  test("object style commit", () => {
     const store = new Vuex.Store({
       state: {
         a: 1
@@ -69,13 +69,13 @@ describe("Mutations", () => {
 });
 
 describe("Store", () => {
-  it("asserts the call without new operator", () => {
+  it("cannot be called as a function", () => {
     expect(() => {
       Vuex.Store({});
     }).toThrowError(/Cannot call a class as a function/);
   });
 
-  test("store injection", () => {
+  test("injection", () => {
     const store = new Vuex.Store({ state: { a: 1 } });
     const vm = new Vue({
       store
@@ -86,7 +86,7 @@ describe("Store", () => {
 });
 
 describe("State", () => {
-  it("should accept state as function", () => {
+  it("should accept a function as state", () => {
     const store = new Vuex.Store({
       state: () => ({
         a: 1
@@ -102,20 +102,33 @@ describe("State", () => {
     expect(store.state.a).toBe(3);
   });
 
-  it.skip("should not call root state function twice", () => {
-    const spy = createSpy().and.returnValue(1);
+  it("should not call root state function twice", () => {
+    const setup = {
+      initialState: () => ({ a: 1 })
+    };
+
+    const spy = jest.spyOn(setup, "initialState");
+
     new Vuex.Store({
-      state: spy
+      state: setup.initialState
     });
+
     expect(spy).toHaveBeenCalledTimes(1);
   });
 });
 
 describe("Subscriptions", () => {
-  it.skip("subscribe: should handle subscriptions / unsubscriptions", () => {
-    const subscribeSpy = jasmine.createSpy();
-    const secondSubscribeSpy = jasmine.createSpy();
+  test("subscriptions / unsubscriptions", () => {
+    const subscribers = {
+      one: () => {},
+      two: () => {}
+    };
+
+    const subscribeSpy = jest.spyOn(subscribers, "one");
+    const secondSubscribeSpy = jest.spyOn(subscribers, "two");
+
     const testPayload = 2;
+
     const store = new Vuex.Store({
       state: {},
       mutations: {
@@ -123,8 +136,9 @@ describe("Subscriptions", () => {
       }
     });
 
-    const unsubscribe = store.subscribe(subscribeSpy);
-    store.subscribe(secondSubscribeSpy);
+    const unsubscribe = store.subscribe(subscribers.one);
+    store.subscribe(subscribers.two);
+
     store.commit(TEST, testPayload);
     unsubscribe();
     store.commit(TEST, testPayload);
@@ -134,7 +148,7 @@ describe("Subscriptions", () => {
       store.state
     );
     expect(secondSubscribeSpy).toHaveBeenCalled();
-    expect(subscribeSpy.calls.count()).toBe(1);
-    expect(secondSubscribeSpy.calls.count()).toBe(2);
+    expect(subscribeSpy).toHaveBeenCalledTimes(1);
+    expect(secondSubscribeSpy).toHaveBeenCalledTimes(2);
   });
 });

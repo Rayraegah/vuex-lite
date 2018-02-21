@@ -1,6 +1,6 @@
 {
   "name": "vuex-lite",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A lightweight vuex",
   "main": "dist/vuex-lite.cjs.js",
   "module": "dist/vuex-lite.es.js",
@@ -13,7 +13,10 @@
   "scripts": {
     "test": "jest",
     "build": "bili",
-    "pretty": "prettier --write 'src/**/*.js'"
+    "codecov": "codecov",
+    "pretty": "prettier --write 'src/**/*.js'",
+    "version": "npm run test && npm run build",
+    "postversion": "npm publish"
   },
   "babel": {
     "presets": "env"
@@ -47,7 +50,7 @@
     "semi": true
   },
   "jest": {
-    "collectCoverage": false,
+    "collectCoverage": true,
     "collectCoverageFrom": ["src/**/*.{js,es6}"],
     "coverageDirectory": ".coverage"
   },
@@ -64,6 +67,7 @@
   "homepage": "https://github.com/rayraegah/vuex-lite#readme",
   "devDependencies": {
     "bili": "^2.2.7",
+    "codecov": "^3.0.0",
     "jest": "^22.4.0",
     "prettier": "^1.10.2",
     "vue": "^2.5.13"

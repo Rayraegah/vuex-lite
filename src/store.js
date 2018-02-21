@@ -1,15 +1,33 @@
 import devtoolPlugin from "./plugins/devtool";
+import { assert, isObject } from "./utils";
 import { createMapState, mapToMethods } from "./helpers";
-import { IS_PROD, unifyObjectStyle, assert } from "./utils";
 
 let Vue; // bind on install
 
-export class Store {
+function unifyObjectStyle(type, payload, options) {
+  if (isObject(type) && type.type) {
+    options = payload;
+    payload = type;
+    type = type.type;
+  }
+
+  assert(
+    typeof type === "string",
+    `Expects string as the type, but found ${typeof type}.`
+  );
+
+  return { type, payload, options };
+}
+
+export default class Store {
   constructor({ state, mutations = {}, plugins = [], subscribers = [] } = {}) {
     // automatic installation
     if (!Vue && typeof window !== "undefined" && window.Vue) {
       install(window.Vue);
     }
+
+    const store = this;
+    const { commit } = this;
 
     this._vm = new Vue({
       data: {
@@ -18,16 +36,21 @@ export class Store {
     });
 
     this._committing = false;
-    this._mutations = mutations;
-    this._subscribers = subscribers;
+    this.mutations = mutations;
+    this.subscribers = subscribers;
+
+    // bind commit to self
+    this.commit = function boundCommit(type, payload, options) {
+      return commit.call(store, type, payload, options);
+    };
 
     if (plugins) {
       plugins.forEach(p => this.use(p));
     }
 
     if (Vue.config.devtools) {
-      this._getters = [];
-      this._actions = [];
+      this.getters = [];
+      this.actions = [];
       devtoolPlugin(this);
     }
 
@@ -40,17 +63,12 @@ export class Store {
   }
 
   set state(d) {
-    if (!IS_PROD) {
-      assert(
-        false,
-        `Use store.replaceState() to explicit replace store state.`
-      );
-    }
+    assert(false, `Use store.replaceState() to explicit replace store state.`);
   }
 
   subscribe(sub) {
-    this._subscribers.push(sub);
-    return () => this._subscribers.splice(this._subscribers.indexOf(sub), 1);
+    this.subscribers.push(sub);
+    return () => this.subscribers.splice(this.subscribers.indexOf(sub), 1);
   }
 
   commit(_type, _payload, _options) {
@@ -61,13 +79,13 @@ export class Store {
     );
 
     const mutation = { type, payload };
-    const handler = this._mutations[type];
+    const handler = this.mutations[type];
 
     this._withCommit(() => {
       handler(this.state, payload);
     });
 
-    this._subscribers.forEach(sub => sub(mutation, this.state));
+    this.subscribers.forEach(sub => sub(mutation, this.state));
   }
 
   use(fn) {
@@ -90,12 +108,10 @@ export class Store {
 
 export function install(_Vue) {
   if (Vue && _Vue === Vue) {
-    if (!IS_PROD) {
-      assert(
-        false,
-        `already installed. Vue.use(Vuex) should be called only once.`
-      );
-    }
+    assert(
+      false,
+      `already installed. Vue.use(Vuex) should be called only once.`
+    );
     return;
   }
 
