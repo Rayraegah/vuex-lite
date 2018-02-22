@@ -1,5 +1,5 @@
 import Vue from "vue";
-import Vuex from "../";
+import Vuex, { install } from "../";
 
 const TEST = "TEST";
 
@@ -68,23 +68,6 @@ describe("Mutations", () => {
   });
 });
 
-describe("Store", () => {
-  it("cannot be called as a function", () => {
-    expect(() => {
-      Vuex.Store({});
-    }).toThrowError(/Cannot call a class as a function/);
-  });
-
-  test("injection", () => {
-    const store = new Vuex.Store({ state: { a: 1 } });
-    const vm = new Vue({
-      store
-    });
-    const child = new Vue({ parent: vm });
-    expect(child.$store).toBe(store);
-  });
-});
-
 describe("State", () => {
   it("should accept a function as state", () => {
     const store = new Vuex.Store({
@@ -107,13 +90,37 @@ describe("State", () => {
       initialState: () => ({ a: 1 })
     };
 
-    const spy = jest.spyOn(setup, "initialState");
+    const stateSpy = jest.spyOn(setup, "initialState");
 
     new Vuex.Store({
       state: setup.initialState
     });
 
-    expect(spy).toHaveBeenCalledTimes(1);
+    expect(stateSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not allow explicit state modification", () => {
+    const store = new Vuex.Store({
+      state: {
+        a: 1
+      }
+    });
+    expect(() => {
+      store.state = { a: 10 };
+    }).toThrowError(/to explicitly replace state/);
+    expect(store.state.a).toBe(1);
+  });
+
+  test("replace state", () => {
+    const initialState = { a: 1 };
+
+    const store = new Vuex.Store({
+      state: { ...initialState }
+    });
+
+    expect(store.state.a).toBe(1);
+    store.replaceState({ a: 2 });
+    expect(store.state.a).toBe(2);
   });
 });
 
@@ -150,5 +157,61 @@ describe("Subscriptions", () => {
     expect(secondSubscribeSpy).toHaveBeenCalled();
     expect(subscribeSpy).toHaveBeenCalledTimes(1);
     expect(secondSubscribeSpy).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("Store", () => {
+  it("cannot be called as a function", () => {
+    expect(() => {
+      Vuex.Store({});
+    }).toThrowError(/Cannot call a class as a function/);
+  });
+
+  test("injection", () => {
+    const store = new Vuex.Store({ state: { a: 1 } });
+    const vm = new Vue({
+      store
+    });
+    const child = new Vue({ parent: vm });
+    expect(child.$store).toBe(store);
+  });
+
+  test("plugins", () => {
+    const myplugins = {
+      logger: _store => {
+        // called when the store is initialized
+        _store.subscribe((mutation, state) => {
+          // called after every mutation.
+          // The mutation comes in the format of `{ type, payload }`.
+          return true;
+        });
+      }
+    };
+
+    const pluginSpy = jest.spyOn(myplugins, "logger");
+
+    const store = new Vuex.Store({
+      state: {
+        a: 1
+      },
+
+      plugins: [myplugins.logger],
+
+      mutations: {
+        [TEST](state, n) {
+          state.a += n;
+        }
+      }
+    });
+
+    store.commit(TEST, 2);
+    store.commit(TEST, 5);
+    expect(pluginSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("install", () => {
+    expect(() => {
+      install(Vue);
+    }).toThrowError(/already installed/);
   });
 });

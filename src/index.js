@@ -1,5 +1,6 @@
-import Store, { install, mapState, mapMutations } from "./store";
+import Store, { install } from "./store";
+import { mapState, mapMutations } from "./helpers";
 
-// emulate vuex
+// emulate vuex esm
 export default { Store, install, mapState, mapMutations };
 export { Store, install, mapState, mapMutations };

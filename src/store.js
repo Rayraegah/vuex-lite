@@ -1,8 +1,10 @@
-import devtoolPlugin from "./plugins/devtool";
 import { assert, isObject } from "./utils";
 import { createMapState, mapToMethods } from "./helpers";
 
-let Vue; // bind on install
+// connects to vuex devtools
+import devtoolPlugin from "./plugins/devtool";
+
+let Vue; // bind on install => Vue.use(Vuex)
 
 function unifyObjectStyle(type, payload, options) {
   if (isObject(type) && type.type) {
@@ -21,7 +23,7 @@ function unifyObjectStyle(type, payload, options) {
 
 export default class Store {
   constructor({ state, mutations = {}, plugins = [], subscribers = [] } = {}) {
-    // automatic installation
+    // automatic installation on browsers
     if (!Vue && typeof window !== "undefined" && window.Vue) {
       install(window.Vue);
     }
@@ -40,12 +42,12 @@ export default class Store {
     this.subscribers = subscribers;
 
     // bind commit to self
-    this.commit = function boundCommit(type, payload, options) {
+    this.commit = (type, payload, options) => {
       return commit.call(store, type, payload, options);
     };
 
     if (plugins) {
-      plugins.forEach(p => this.use(p));
+      plugins.forEach(plugin => plugin(this));
     }
 
     if (Vue.config.devtools) {
@@ -62,8 +64,12 @@ export default class Store {
     return this._vm.$data.$$state;
   }
 
-  set state(d) {
-    assert(false, `Use store.replaceState() to explicit replace store state.`);
+  set state(v) {
+    /**
+     * @todo Add deep watch for state to prevent mutations outside handlers
+     * @body [not safe for production](https://vuex.vuejs.org/en/strict.html)
+     */
+    assert(false, `Use store.replaceState() to explicitly replace state.`);
   }
 
   subscribe(sub) {
@@ -88,11 +94,6 @@ export default class Store {
     this.subscribers.forEach(sub => sub(mutation, this.state));
   }
 
-  use(fn) {
-    fn(this);
-    return this;
-  }
-
   replaceState(state) {
     this._vm.$data.$$state = state;
     return this;
@@ -112,6 +113,7 @@ export function install(_Vue) {
       false,
       `already installed. Vue.use(Vuex) should be called only once.`
     );
+    /* istanbul ignore next: unreachable code in test or development */
     return;
   }
 
@@ -123,15 +125,14 @@ export function install(_Vue) {
 
   function vuexInit() {
     const options = this.$options;
-    // store injection
+
     if (options.store) {
+      // store injection
       this.$store =
         typeof options.store === "function" ? options.store() : options.store;
     } else if (options.parent && options.parent.$store) {
+      // store injection for children
       this.$store = options.parent.$store;
     }
   }
 }
-
-export const mapState = createMapState();
-export const mapMutations = mapToMethods("mutations", "commit");

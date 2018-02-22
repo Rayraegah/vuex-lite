@@ -1,8 +1,8 @@
-function normalizeMap(map) {
+const normalizeMap = map => {
   return Array.isArray(map)
     ? map.map(key => ({ key, val: key }))
     : Object.keys(map).map(key => ({ key, val: map[key] }));
-}
+};
 
 export const createMapState = _store => states => {
   const res = {};
@@ -31,3 +31,6 @@ export const mapToMethods = (sourceName, runnerName, _store) => map => {
   }
   return res;
 };
+
+export const mapState = createMapState();
+export const mapMutations = mapToMethods("mutations", "commit");
