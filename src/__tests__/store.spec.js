@@ -115,7 +115,7 @@ describe("State", () => {
     const initialState = { a: 1 };
 
     const store = new Vuex.Store({
-      state: { ...initialState }
+      state: initialState
     });
 
     expect(store.state.a).toBe(1);
