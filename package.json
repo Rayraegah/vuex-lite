@@ -33,9 +33,9 @@
       }
     },
     "sizeLimit": {
-      "es": "2KB",
-      "cjs": "2KB",
-      "umd": "2KB",
+      "es": "3KB",
+      "cjs": "3KB",
+      "umd": "3KB",
       "umd-min": "2KB"
     },
     "exports": "named"
