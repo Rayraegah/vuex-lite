@@ -122,7 +122,7 @@ describe("Helpers (built-in)", () => {
 
     const vm = new Vue({
       store,
-      computed: { ...store.mapState(["a"]) }
+      computed: store.mapState(["a"])
     });
 
     expect(vm.a).toBe(1);
@@ -147,13 +147,11 @@ describe("Helpers (built-in)", () => {
 
     const vm = new Vue({
       store,
-      computed: {
-        ...store.mapState({
-          a: state => {
-            return state.a + state.b;
-          }
-        })
-      }
+      computed: store.mapState({
+        a: state => {
+          return state.a + state.b;
+        }
+      })
     });
 
     expect(vm.a).toBe(2);
@@ -171,12 +169,10 @@ describe("Helpers (built-in)", () => {
     });
     const vm = new Vue({
       store,
-      methods: {
-        ...store.mapMutations({
-          plus: "inc",
-          minus: "dec"
-        })
-      }
+      methods: store.mapMutations({
+        plus: "inc",
+        minus: "dec"
+      })
     });
     vm.plus();
     expect(store.state.count).toBe(1);
