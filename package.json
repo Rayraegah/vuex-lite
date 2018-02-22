@@ -1,12 +1,14 @@
 {
   "name": "vuex-lite",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A lightweight vuex",
   "main": "dist/vuex-lite.cjs.js",
   "module": "dist/vuex-lite.es.js",
   "unpkg": "dist/vuex-lite.min.js",
   "jsdelivr": "dist/vuex-lite.min.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "engines": {
     "node": ">=7.8.0"
   },
@@ -23,7 +25,12 @@
     "presets": "env"
   },
   "bili": {
-    "format": ["umd", "umd-min", "cjs", "es"],
+    "format": [
+      "umd",
+      "umd-min",
+      "cjs",
+      "es"
+    ],
     "moduleName": "Vuex",
     "global": {
       "vue": "Vue"
@@ -52,14 +59,19 @@
   },
   "jest": {
     "collectCoverage": true,
-    "collectCoverageFrom": ["src/*.{js,es6}"],
+    "collectCoverageFrom": [
+      "src/*.{js,es6}"
+    ],
     "coverageDirectory": ".coverage"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rayraegah/vuex-lite.git"
   },
-  "keywords": ["state-manager", "vue"],
+  "keywords": [
+    "state-manager",
+    "vue"
+  ],
   "author": "rayraegah",
   "license": "MIT",
   "bugs": {
