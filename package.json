@@ -6,9 +6,7 @@
   "module": "dist/vuex-lite.es.js",
   "unpkg": "dist/vuex-lite.min.js",
   "jsdelivr": "dist/vuex-lite.min.js",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "engines": {
     "node": ">=7.8.0"
   },
@@ -17,19 +15,15 @@
     "build": "bili",
     "codecov": "codecov",
     "pretty": "prettier --write 'src/**/*.js'",
-    "version": "npm run test && npm run build",
-    "postversion": "npm publish"
+    "preversion": "npm run test && npm run build",
+    "version": "npm publish",
+    "postversion": "git push && git push --tags"
   },
   "babel": {
     "presets": "env"
   },
   "bili": {
-    "format": [
-      "umd",
-      "umd-min",
-      "cjs",
-      "es"
-    ],
+    "format": ["umd", "umd-min", "cjs", "es"],
     "moduleName": "Vuex",
     "global": {
       "vue": "Vue"
@@ -58,19 +52,14 @@
   },
   "jest": {
     "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/*.{js,es6}"
-    ],
+    "collectCoverageFrom": ["src/*.{js,es6}"],
     "coverageDirectory": ".coverage"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rayraegah/vuex-lite.git"
   },
-  "keywords": [
-    "state-manager",
-    "vue"
-  ],
+  "keywords": ["state-manager", "vue"],
   "author": "rayraegah",
   "license": "MIT",
   "bugs": {

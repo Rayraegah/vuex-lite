@@ -4,11 +4,11 @@ const normalizeMap = map => {
     : Object.keys(map).map(key => ({ key, val: map[key] }));
 };
 
-export const createMapState = _store => states => {
+export const createMapState = store => states => {
   const res = {};
   for (const { key, val } of normalizeMap(states)) {
     res[key] = function() {
-      const store = _store || this.$store;
+      // const store = _store || this.$store;
       return typeof val === "function"
         ? val.call(this, store.state)
         : store.state[val];
@@ -17,11 +17,11 @@ export const createMapState = _store => states => {
   return res;
 };
 
-export const mapToMethods = (sourceName, runnerName, _store) => map => {
+export const mapToMethods = (sourceName, runnerName, store) => map => {
   const res = {};
   for (const { key, val } of normalizeMap(map)) {
     res[key] = function(payload) {
-      const store = _store || this.$store;
+      // const store = _store || this.$store;
       const source = store[sourceName];
       const runner = store[runnerName];
       const actualSource =
@@ -31,6 +31,3 @@ export const mapToMethods = (sourceName, runnerName, _store) => map => {
   }
   return res;
 };
-
-export const mapState = createMapState();
-export const mapMutations = mapToMethods("mutations", "commit");
